@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# https://github.com/jasonk/inform-slack
+
+source inform-slack
+
+tests=0
+errors=0
+failures=0
+skipped=0
+title="*Junit Test Summary*"
+
+parse-file() {
+  local file="$1"
+  while IFS= read -r LINE; do
+    if [[ $LINE =~ tests=\"([0-9]+)\" ]]; then
+      (( tests += BASH_REMATCH[1] ))
+    fi
+    if [[ $LINE =~ errors=\"([0-9]+)\" ]]; then
+      (( errors += BASH_REMATCH[1] ))
+    fi
+    if [[ $LINE =~ failures=\"([0-9]+)\" ]]; then
+      (( failures += BASH_REMATCH[1] ))
+    fi
+    if [[ $LINE =~ skipped=\"([0-9]+)\" ]]; then
+      (( skipped += BASH_REMATCH[1] ))
+    fi
+  done < <(grep -h '<testsuites ' "$file")
+}
+
+while (( $# )); do
+  case "$1" in
+    -T|--title) title="$2"        ; shift 2 ;;
+    --title=*)  title="${1#*=}"   ; shift 1 ;;
+    -*)         usage "Unknown option '$1'" ;;
+    *)          parse-file "$1"   ; shift 1 ;;
+  esac
+done
+
+run-builder tests-summary --title "$title" \
+  --tests $tests --pass $oks --fail $notoks

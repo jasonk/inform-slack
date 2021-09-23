@@ -1,0 +1,7 @@
+brew 'bash'
+brew 'coreutils'
+brew 'pandoc'
+
+brew 'zlib'
+brew 'cmake'
+brew 'pkgconfig'

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# https://github.com/jasonk/inform-slack
+
+source inform-slack
+
+args=()
+
+while (( $# )); do
+  case "$1" in
+    -f|--file)     args+=( "file=@$2"          )  ; shift 2 ;;
+    --file=*)      args+=( "file=@${1#*=}"     )  ; shift 1 ;;
+    -C|--content)  args+=( "content=<$2"       )  ; shift 2 ;;
+    --content=*)   args+=( "content=<${1#*=}"  )  ; shift 1 ;;
+    -F|--filename) args+=( "filename=$2"       )  ; shift 2 ;;
+    --filename=*)  args+=( "filename=${1#*=}"  )  ; shift 1 ;;
+    -T|--title)    args+=( "title=$2"          )  ; shift 2 ;;
+    --title=*)     args+=( "title=${1#*=}"     )  ; shift 1 ;;
+    -c|--comment)  args+=( "comment=$2"        )  ; shift 2 ;;
+    --comment=*)   args+=( "comment=${1#*=}"   )  ; shift 1 ;;
+    -t|--type)     args+=( "filetype=$2"       )  ; shift 2 ;;
+    --type=*)      args+=( "filetype=${1#*=}"  )  ; shift 1 ;;
+    --filetype)    args+=( "filetype=$2"       )  ; shift 2 ;;
+    --filetype=*)  args+=( "filetype=${1#*=}"  )  ; shift 1 ;;
+    *)             usage "Unknown option '$1'"              ;;
+  esac
+done
+
+upload-file "$file" "${args[@]}"

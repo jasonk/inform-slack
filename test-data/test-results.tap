@@ -1,0 +1,65 @@
+1..17
+ok 1 block-context
+ok 2 block-header
+ok 3 element-image
+ok 4 block-image
+ok 5 block-list
+not ok 6 main binary
+# (from function `assert_output' in file dev/repos/bats-assert/src/assert_output.bash, line 194,
+#  from function `assert_json' in file dev/bats-setup.bash, line 19,
+#  in test file test/main.bats, line 32)
+#   `}'' failed
+# parse error: Invalid numeric literal at line 1, column 75
+# FAILED TO PARSE JSON: /Users/jasonkohles/personal/projects/inform-slack/test/../bin/inform-slack: line 152: syntax error near unexpected token `else'
+# 
+# -- output differs --
+# expected (25 lines):
+#   {
+#     "blocks": [
+#       {
+#         "text": {
+#           "emoji": true,
+#           "text": ":construction: Testing A Thing",
+#           "type": "plain_text"
+#         },
+#         "type": "header"
+#       },
+#       {
+#         "text": {
+#           "text": "`⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜` 50%",
+#           "type": "mrkdwn"
+#         },
+#         "type": "section"
+#       }
+#     ],
+#     "channel": "C02DXPYRLAE",
+#     "link_names": false,
+#     "text": ":construction: Testing A Thing",
+#     "ts": "__DRY_RUN__",
+#     "unfurl_links": false,
+#     "unfurl_media": false
+#   }
+# actual (1 lines):
+#   /Users/jasonkohles/personal/projects/inform-slack/test/../bin/inform-slack: line 152: syntax error near unexpected token `else'
+# --
+# 
+not ok 7 produces thread_id
+# (from function `assert_output' in file dev/repos/bats-assert/src/assert_output.bash, line 194,
+#  in test file test/main.bats, line 43)
+#   `assert_output "__DRY_RUN__"' failed
+# 
+# -- output differs --
+# expected : __DRY_RUN__
+# actual   : /Users/jasonkohles/personal/projects/inform-slack/test/../bin/inform-slack: line 152: syntax error near unexpected token `else'
+# --
+# 
+ok 8 block-divider
+ok 9 block-file
+ok 10 progress-bar-widths
+ok 11 block-progress
+ok 12 block-section
+ok 13 section-fields
+ok 14 block-fields
+ok 15 block-mrkdwn
+ok 16 text-mrkdwn
+ok 17 text-plain

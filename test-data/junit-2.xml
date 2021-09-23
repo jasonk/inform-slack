@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="TestSuites #2" tests="3" errors="1" failures="1" skipped="1">
+  <testsuite name="Suite #1" tests="1" errors="0" failures="1" skipped="0">
+    <testcase name="Failing test #1" status="failure">
+      <failure type="AssertionError" message="expected true to equal false">
+      </failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Suite #2" tests="1" errors="0" failures="0" skipped="1">
+    <testcase name="Test #1" status="skipped"><skipped/></testcase>
+  </testsuite>
+  <testsuite name="Suite #3" tests="1" errors="1" failures="0" skipped="0"/>
+    <testcase name="Errored test #1" status="error">
+      <error type="Error" message="Unexpectedly Exploded.">
+        <![CDATA[Error: Unexpectedly Exploded.]]>
+      </error>
+    </testcase>
+  </testcase>
+</testsuites>

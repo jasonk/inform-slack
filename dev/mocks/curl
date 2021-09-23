@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+ARGS=( "$@" )
+URL=""
+HAS_STDIN=false
+
+{
+  echo "${ARGS[@]}" | xargs -n1 | jq -nR '{ args: [inputs | select(length>0)] }'
+  for ARG in "${ARGS[@]}"; do
+    if [ "$ARG" = "-d@-" ]; then
+      jq -n '{ stdin: true }'
+      HAS_STDIN=true
+    fi
+    if [[ $ARG =~ ^https?:// ]]; then
+      URL="$ARG"
+      API="${URL##*/}"
+      jq -n --arg URL "$URL" --arg API "$API" '{url: $URL, api: $API}'
+    fi
+  done
+  if $HAS_STDIN; then jq '{ data: . }'; fi
+} | jq -s 'add' > "$MOCK_CURL_OUTPUT"
+
+if [ "$API" = "chat.postMessage" ]; then
+  echo '{ "ts": "__MOCKED__" }'
+else
+  echo '{ "ts": "__MOCKED__" }'
+fi

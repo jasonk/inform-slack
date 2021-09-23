@@ -1,0 +1,4 @@
+/.env
+/coverage
+/dev/mock-curl-output.json
+/test-results.tap

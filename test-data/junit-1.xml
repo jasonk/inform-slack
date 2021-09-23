@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="TestSuites #1" tests="8" errors="0" failures="0" skipped="0">
+  <testsuite name="Suite #1" tests="3" errors="0" failures="0" skipped="0">
+    <testcase name="Test #1" status="passed"/>
+    <testcase name="Test #2" status="passed"/>
+    <testcase name="Test #3" status="passed"/>
+  </testsuite>
+  <testsuite name="Suite #1" tests="5" errors="0" failures="0" skipped="0">
+    <testcase name="Test #1" status="passed"/>
+    <testcase name="Test #1" status="passed"/>
+    <testcase name="Test #1" status="passed"/>
+    <testcase name="Test #1" status="passed"/>
+    <testcase name="Test #1" status="passed"/>
+  </testsuite>
+  <testsuite name="" tests="0" errors="0" failures="0" skipped="0"/>
+</testsuites>

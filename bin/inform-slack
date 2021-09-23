@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# https://github.com/jasonk/inform-slack
+
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/inform-slack.sh"
+
+# If this script was sourced instead of executed then we don't run the
+# main function, we just return from here and you can run it yourself
+# later if you want
+if ( return 0 2>/dev/null ); then return; fi
+
+# If the script was executed and not sourced, then we run it ourselves.
+set -eo pipefail
+inform_slack "$@"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="4.3">
+  <file name="fake-file-1">
+    <error severity="warning" message="Warning #1" />
+    <error severity="error" message="Error #1" />
+  </file>
+  <file name="fake-file-2" />
+  <file name="fake-file-3">
+    <error severity="warning" message="Warning #2" />
+  </file>
+</checkstyle>

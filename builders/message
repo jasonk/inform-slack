@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# https://github.com/jasonk/inform-slack
+
+source inform-slack
+
+for I in "$@"; do block-mrkdwn "$I"; done

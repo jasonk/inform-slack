@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# https://github.com/jasonk/inform-slack
+
+source inform-slack
+
+title="*Test Results:*"
+icon=""
+tested=""
+passed=""
+failed=""
+errored=""
+skipped=""
+warned=""
+
+order="tests pass fail error warn skip"
+
+test_label="Tests: "
+pass_label="Passed: "
+fail_label="Failed: "
+error_label="Errors: "
+skip_label="Skipped: "
+warn_label="Warnings: "
+
+test_icon=":clipboard:"
+pass_icon=":white_check_mark:"
+fail_icon=":no_entry_sign:"
+skip_icon=":fast_forward:"
+error_icon=":boom:"
+warn_icon=":warning:"
+
+while (( $# )); do
+  case "$1" in
+    --order)             order="$2"            ; shift 2 ;;
+    --order=*)           order="${1#*=}"       ; shift 1 ;;
+    -T|--title)          title="$2"            ; shift 2 ;;
+    --title=*)           title="${1#*=}"       ; shift 1 ;;
+    -i|--icon)           icon="$2"             ; shift 2 ;;
+    --icon=*)            icon="${1#*=}"        ; shift 1 ;;
+    -t|--tests)          tested="$2"           ; shift 2 ;;
+    --tests=*)           tested="${1#*=}"      ; shift 1 ;;
+    -p|--pass)           passed="$2"           ; shift 2 ;;
+    --pass=*)            passed="${1#*=}"      ; shift 1 ;;
+    -f|--fail)           failed="$2"           ; shift 2 ;;
+    --fail=*)            failed="${1#*=}"      ; shift 1 ;;
+    -s|--skip)           skipped="$2"          ; shift 2 ;;
+    --skip=*)            skipped="${1#*=}"     ; shift 1 ;;
+    -w|--warn)           warned="$2"           ; shift 2 ;;
+    --warn=*)            warned="${1#*=}"      ; shift 1 ;;
+    -e|--error|--error)  errored="$2"          ; shift 2 ;;
+    --error=*|--error=*) errored="${1#*=}"     ; shift 1 ;;
+    --tests-label)       test_label="$2"       ; shift 2 ;;
+    --tests-label=*)     test_label="${1#*=}"  ; shift 1 ;;
+    --pass-label)        pass_label="$2"       ; shift 2 ;;
+    --pass-label=*)      pass_label="${1#*=}"  ; shift 1 ;;
+    --fail-label)        fail_label="$2"       ; shift 2 ;;
+    --fail-label=*)      fail_label="${1#*=}"  ; shift 1 ;;
+    --warn-label)        warn_label="$2"       ; shift 2 ;;
+    --warn-label=*)      warn_label="${1#*=}"  ; shift 1 ;;
+    --skip-label)        skip_label="$2"       ; shift 2 ;;
+    --skip-label=*)      skip_label="${1#*=}"  ; shift 1 ;;
+    --error-label)       error_label="$2"      ; shift 2 ;;
+    --error-label=*)     error_label="${1#*=}" ; shift 1 ;;
+    --tests-icon)        test_icon="$2"        ; shift 2 ;;
+    --tests-icon=*)      test_icon="${1#*=}"   ; shift 1 ;;
+    --pass-icon)         pass_icon="$2"        ; shift 2 ;;
+    --pass-icon=*)       pass_icon="${1#*=}"   ; shift 1 ;;
+    --fail-icon)         fail_icon="$2"        ; shift 2 ;;
+    --fail-icon=*)       fail_icon="${1#*=}"   ; shift 1 ;;
+    --warn-icon)         warn_icon="$2"        ; shift 2 ;;
+    --warn-icon=*)       warn_icon="${1#*=}"   ; shift 1 ;;
+    --skip-icon)         skip_icon="$2"        ; shift 2 ;;
+    --skip-icon=*)       skip_icon="${1#*=}"   ; shift 1 ;;
+    --error-icon)        error_icon="$2"       ; shift 2 ;;
+    --error-icon=*)      error_icon="${1#*=}"  ; shift 1 ;;
+    --no-icons)
+      test_icon=""; pass_icon=""; fail_icon=""; skip_icon="";
+      warn_icon=""; error_icon=""
+      ;;
+    *)                   usage "Unknown option '$1'"     ;;
+  esac
+done
+
+fields=()
+
+if [ -n "$icon" ]; then title="$icon $title"; fi
+
+for I in $order; do
+  value_var="${I}ed"
+  label_var="${I}_label"
+  icon_var="${I}_icon"
+  value="${!value_var}"
+  label="${!label_var}"
+  icon="${!icon_var}"
+  if [ -z "$value" ]; then continue; fi
+  if [ -n "$label" ]; then value="$label$value"; fi
+  if [ -n "$icon" ]; then value="$icon $value"; fi
+  if [ -n "$value" ]; then fields+=( "$value" ); fi
+done
+
+block-section "$title" "$(section-fields "${fields[@]}")"
