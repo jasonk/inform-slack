@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # https://github.com/jasonk/inform-slack
 
+export INFORM_SLACK_VERSION="v1.0.0"
+
 # Defaults
 : ${INFORM_SLACK_UNFURL_LINKS:=false}
 : ${INFORM_SLACK_UNFURL_MEDIA:=false}
@@ -319,6 +321,7 @@ inform_slack() {
     case "$1" in
       # Option Flags
       -h|--help)              usage                         ; exit ;;
+      -V|--version)           echo "$INFORM_SLACK_VERSION"  ; exit ;;
       -l|--list-builders)     list-builders                 ; exit ;;
       -H|--help-builder)      shift 1 ; help-builder "$1"   ; exit ;;
       -n|--dry-run)
