@@ -42,11 +42,11 @@ if [ -n "$(git status --porcelain=v1 2>/dev/null)" ]; then
  die "The repo has uncommitted changes"
 fi
 
-git tag -a "$EV" -m ":shipit: Release $EV"
+git tag -a "$EV" -m "Release $EV"
 git push origin "$EV"
 
 rm -rf inform-slack
 mkdir inform-slack
 cp -a ../*.md ../LICENSE ../bin ../builders ../lib inform-slack
 tar cvfz "inform-slack-${EV}.tgz" inform-slack
-gh release create "$EV" "inform-slack-${EV}.tgz"
+gh release create "$EV" -n '' -t '' "inform-slack-${EV}.tgz"
