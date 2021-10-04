@@ -3,4 +3,4 @@
 /dev/mock-curl-output.json
 /dev/*.tgz
 /dev/inform-slack/**
-/test-results.tap
+/dev/test-results.tap

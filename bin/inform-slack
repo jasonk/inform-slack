@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 # https://github.com/jasonk/inform-slack
 
-source "$(dirname "${BASH_SOURCE[0]}")/../lib/inform-slack.sh"
+export INFORM_SLACK_VERSION="v1.0.2"
 
-# If this script was sourced instead of executed then we don't run the
-# main function, we just return from here and you can run it yourself
-# later if you want
-if ( return 0 2>/dev/null ); then return; fi
+export INFORM_SLACK_SELF="$(realpath -P "${BASH_SOURCE[0]}")"
+export INFORM_SLACK_DIR="$(cd -P "$(dirname "$INFORM_SLACK_SELF")/.." && pwd)"
+source "$INFORM_SLACK_DIR/lib/inform-slack.sh"
 
-# If the script was executed and not sourced, then we run it ourselves.
-set -eo pipefail
-inform_slack "$@"
+if ( return 0 2>/dev/null ); then
+  # If this script was sourced instead of executed then we don't run
+  # the main function, we just return from here and you can run it
+  # yourself later if you want
+  INFORM_SLACK_SOURCED=true
+  return
+else
+  # If the script was executed and not sourced, then we run it ourselves.
+  INFORM_SLACK_SOURCED=false
+  set -eo pipefail
+  inform_slack "$@"
+fi

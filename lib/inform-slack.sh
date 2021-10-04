@@ -1,17 +1,12 @@
 #!/usr/bin/env bash
 # https://github.com/jasonk/inform-slack
 
-export INFORM_SLACK_VERSION="v1.0.0"
-
 # Defaults
 : ${INFORM_SLACK_UNFURL_LINKS:=false}
 : ${INFORM_SLACK_UNFURL_MEDIA:=false}
 : ${INFORM_SLACK_LINK_NAMES:=false}
 : ${INFORM_SLACK_REPLY_BROADCAST:=}
 
-INFORM_SLACK_DIR="$(
-  cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd
-)"
 if [ -n "${INFORM_SLACK_BUILDERS:-}" ]; then
   INFORM_SLACK_BUILDERS="$INFORM_SLACK_BUILDERS:$INFORM_SLACK_DIR/builders"
 else
@@ -255,39 +250,33 @@ open-url() {
 list-builders() {
   local DIRS DIR
   IFS=: read -ra DIRS <<<"$INFORM_SLACK_BUILDERS"
-  for DIR in "${DIRS[@]}"; do ls -1 "$DIR"; done | sort | uniq
+  for DIR in "${DIRS[@]}"; do ls -1 "$DIR"; done \
+    | sort | uniq | grep -v -E '\.md$'
 }
 
 show-help-file() {
-  local FILE="${1:-$0}" ; shift
+  local FILE="$(realpath -P "$1").md"
   if [ -f "$FILE" ]; then
     if command -v bat &>/dev/null; then
-      bat "$@" "$FILE"
+      bat -p "$FILE"
     else
       cat "$FILE"
     fi
   else
-    die "No help found ($FILE)"
+    die "No help found for $1 ($FILE)"
   fi
 }
 
 help-builder() {
-  local BUILDER="$1"
-  local FILE="$(find-builder "$BUILDER").md"
-  if [ -f "$FILE" ]; then
-    show-help-file "$FILE"
-  else
-    die "No help found for builder '$BUILDER'"
-  fi
+  local BUILDER="$(find-builder "$1")"
+  show-help-file "$BUILDER"
 }
 
 usage() {
   local ERROR="${1:-}"
-  FILE="$0.md"
   if [ -n "$ERROR" ]; then warn "ERROR: $ERROR"; fi
-  if [ -f "$FILE" ]; then show-help-file "$FILE" -pp; fi
-  if [ -n "$ERROR" ]; then exit 1; fi
-  exit 0
+  show-help-file "$0"
+  if [ -n "$ERROR" ]; then exit 1; else exit 0; fi
 }
 
 message() {
@@ -348,7 +337,7 @@ inform_slack() {
     esac
   done
 
-  if [ -z "$MODE" ]; then usage 'error'; exit 1; fi
+  if [ -z "$MODE" ]; then usage "Must specify mode"; exit 1; fi
 
   debug "MODE=$MODE"
   "$MODE" "$@"
