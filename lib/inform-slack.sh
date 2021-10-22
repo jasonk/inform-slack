@@ -181,6 +181,30 @@ get-thread() {
 
 curl-auth-header() { echo "Authorization: Bearer $TOKEN"; }
 
+curl-can-header-file() {
+  CURL_VERSION="$(curl --version | head -1 | awk '{print $2}')"
+  if [[ $CURL_VERSION =~ \ ([0-9]+)\.([0-9]+)\. ]]; then
+    (( BASH_REMATCH[1] >= 7 )) && (( BASH_REMATCH[2] >= 55 ));
+  else
+    false
+  fi
+}
+
+run-curl() {
+  local ARGS=(
+    -fsSL
+    -H 'Content-Type: application/json; charset=utf-8'
+  )
+
+  if curl-can-header-file; then
+    curl "${ARGS[@]}" -H @<(curl-auth-header) "$@"
+  elif [ -n "${INFORM_SLACK_REQUIRE_HEADER_SAFETY:-}" ]; then
+    die "Curl version $CURL_VERSION cannot provide header safety"
+  else
+    curl "${ARGS[@]}" -H "$(curl-auth-header)" "$@"
+  fi
+}
+
 send-api() {
   local API="$1"
   local PAYLOAD="${2:-$(cat -)}"
@@ -188,12 +212,7 @@ send-api() {
   if [ -z "$TOKEN" ]; then die "No token found"; fi
   shift 2
   local URL="https://slack.com/api/$API"
-  local OUTPUT="$(
-    curl -fsSL -XPOST \
-      -H 'Content-Type: application/json; charset=utf-8' \
-      -H <(curl-auth-header) \
-      -d@- "$URL" <<<"$PAYLOAD"
-  )"
+  local OUTPUT="$(run-curl -XPOST -d@- "$URL" <<<"$PAYLOAD")"
   local ERR="$(jq -r '.error | select( . != null )' <<<"$OUTPUT")"
   if [ -n "$ERR" ]; then die "Error: $ERR"; fi
   echo "$OUTPUT"

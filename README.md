@@ -192,6 +192,24 @@ fi
 inform-slack --update
 ```
 
+# Important Note About Security #
+
+This tool uses `curl` to send the actual requests to Slack, but in
+order to be as safe and secure as possible, we do try to avoid putting
+your Slack API token as a command line argument where anybody that can
+run `ps` can see it.  However, the way we do this is by using curls
+ability to read headers from a file (and we use bash redirection to
+make it read from a temporary pipe instead, so it never actually gets
+written to the disk).
+
+However, this curl feature was added in version 7.55, so if you have
+a version of curl older than that, we fall back to including the
+`Authorization` header as a command-line argument.  If you are using
+this on a multi-user machine you want to ensure that this doesn't
+happen, you can set `$INFORM_SLACK_REQUIRE_HEADER_SAFETY` to any
+non-empty value, and if we detect that your curl version is too old
+we'll just die instead of falling back.
+
 ## Author / License ##
 
 Copyright 2021 - Jason Kohles

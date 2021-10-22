@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # https://github.com/jasonk/inform-slack
 
-export INFORM_SLACK_VERSION="v1.0.4"
+export INFORM_SLACK_VERSION="v1.0.5"
 
 export INFORM_SLACK_SELF="$(realpath -P "${BASH_SOURCE[0]}")"
 export INFORM_SLACK_DIR="$(cd -P "$(dirname "$INFORM_SLACK_SELF")/.." && pwd)"

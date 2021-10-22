@@ -10,6 +10,11 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+## [v1.0.5] - 2021-10-22
+
+- Add curl version detection to fix the auth header hiding.
+- Add `$INFORM_SLACK_REQUIRE_HEADER_SAFETY` option (see README).
+
 ## [v1.0.4] - 2021-10-22
 
 - Add progress clock.
@@ -31,7 +36,8 @@ adheres to [Semantic Versioning][semver].
 
 - First actual release.
 
-[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.5...HEAD
+[v1.0.5]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.5
 [v1.0.4]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.4
 [v1.0.3]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.3
 [v1.0.2]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.2
