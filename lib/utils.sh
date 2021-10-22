@@ -35,6 +35,44 @@ draw-progress-bar() {
   done
 }
 
+# Given a percentage complete, this picks the clock emoji that is
+# closest to that percentage through a 12-hour cycle.
+draw-progress-clock() {
+  local -i PCT="$1"
+
+  local CLOCKS=(
+    :clock1200:
+    :clock1230:
+    :clock100:
+    :clock130:
+    :clock200:
+    :clock230:
+    :clock300:
+    :clock330:
+    :clock400:
+    :clock430:
+    :clock500:
+    :clock530:
+    :clock600:
+    :clock630:
+    :clock700:
+    :clock730:
+    :clock800:
+    :clock830:
+    :clock900:
+    :clock930:
+    :clock1000:
+    :clock1030:
+    :clock1100:
+    :clock1130:
+    :clock1200:
+  )
+
+  local -i WIDE=24
+  local -i DONE=$(( WIDE * PCT / 100 ))
+  echo "${CLOCKS[$DONE]}"
+}
+
 # Emit a plain string message, properly quoted and escaped.  This will
 # be used as the 'text' value in a message
 text() { jq -csR '.|gsub("^\\s+|\\s+$";"")' <<<"$1"; }

@@ -37,4 +37,26 @@ setup() { load "bats-setup.bash"; }
   }'
 }
 
+@test "progress-clock" {
+  source inform-slack
+
+  run draw-progress-clock 0
+  assert_output ":clock1200:"
+
+  run draw-progress-clock 100
+  assert_output ":clock1200:"
+
+  run draw-progress-clock 99
+  assert_output ":clock1130:"
+
+  run draw-progress-clock 50
+  assert_output ":clock600:"
+
+  run draw-progress-clock 75
+  assert_output ":clock900:"
+
+  run draw-progress-clock 25
+  assert_output ":clock300:"
+}
+
 # vim:ft=bash

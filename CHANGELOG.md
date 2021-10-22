@@ -10,6 +10,10 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+## [v1.0.4] - 2021-10-22
+
+- Add progress clock.
+
 ## [v1.0.3] - 2021-10-22
 
 - Add a full dump of the payload when running with debugging.
@@ -17,17 +21,18 @@ adheres to [Semantic Versioning][semver].
 
 ## [v1.0.2] - 2021-10-04
 
-- Make it work correctly when you symlink to the `inform-slack` script
+- Make it work correctly when you symlink to the `inform-slack` script.
 
 ## [v1.0.1] - 2021-10-04
 
-- Fix some release process issues
+- Fix some release process issues.
 
 ## [v1.0.0] - 2021-10-01
 
-- First actual release
+- First actual release.
 
-[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.4...HEAD
+[v1.0.4]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.4
 [v1.0.3]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.3
 [v1.0.2]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.2
 [v1.0.1]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.1

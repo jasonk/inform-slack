@@ -8,6 +8,7 @@ title="${INFORM_SLACK_TITLE:-}"
 status="${INFORM_SLACK_STATUS:-}"
 max="${INFORM_SLACK_PROGRESS_MAX:-}"
 pos="${INFORM_SLACK_PROGRESS_POS:-}"
+clock="${INFORM_SLACK_PROGRESS_CLOCK:-}"
 
 while (( $# )); do
   case "$1" in
@@ -21,11 +22,18 @@ while (( $# )); do
     --max=*)      max="${1#*=}"     ; shift 1 ;;
     -P|--pos)     pos="$2"          ; shift 2 ;;
     --pos=*)      pos="${1#*=}"     ; shift 1 ;;
+    --clock)      clock="true"      ; shift 1 ;;
     *)            usage "Unknown option '$1'" ;;
   esac
 done
 
 text "${txt:-$title${status:+ - $status}}"
-block-header "$title"
-block-progress "$pos" "$max"
+
+if [ -n "$clock" ]; then
+  block-header "$(draw-progress-clock) $title"
+else
+  block-header "$title"
+  block-progress "$pos" "$max"
+fi
+
 block-mrkdwn "$status"
