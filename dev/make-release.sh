@@ -38,9 +38,9 @@ if ! grep -qE "^\[$EV\]: $REPO/releases/tag/$EV$" ../CHANGELOG.md; then
   PROBLEMS+=( "No [$EV] tag in CHANGELOG" )
 fi
 
-#if [ -n "$(git status --porcelain=v1 2>/dev/null)" ]; then
-#  PROBLEMS+=( "The repo has uncommitted changes" )
-#fi
+if [ -n "$(git status --porcelain=v1 2>/dev/null)" ]; then
+  PROBLEMS+=( "The repo has uncommitted changes" )
+fi
 
 if (( ${#PROBLEMS[@]} )); then
   echo "Problems detected, cannot release:" 1>&2
