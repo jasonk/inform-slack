@@ -10,6 +10,8 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+## [v1.0.3] - 2021-10-22
+
 - Add a full dump of the payload when running with debugging.
 - Make the headers work correctly with older versions of curl.
 
@@ -26,6 +28,7 @@ adheres to [Semantic Versioning][semver].
 - First actual release
 
 [Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.3...HEAD
+[v1.0.3]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.3
 [v1.0.2]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.2
 [v1.0.1]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.1
 [v1.0.0]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.0
