@@ -179,14 +179,7 @@ get-thread() {
   fi
 }
 
-curl-headers() {
-  echo "Authorization: Bearer $TOKEN"
-  while (( $# )); do
-    case "$1" in
-      --json) echo 'Content-Type: application/json; charset=utf-8' ; shift 1 ;;
-    esac
-  done
-}
+curl-auth-header() { echo "Authorization: Bearer $TOKEN"; }
 
 send-api() {
   local API="$1"
@@ -196,7 +189,10 @@ send-api() {
   shift 2
   local URL="https://slack.com/api/$API"
   local OUTPUT="$(
-    curl -fsSL -XPOST -H <(curl-headers --json) -d@- "$URL" <<<"$PAYLOAD"
+    curl -fsSL -XPOST \
+      -H 'Content-Type: application/json; charset=utf-8' \
+      -H <(curl-auth-header) \
+      -d@- "$URL" <<<"$PAYLOAD"
   )"
   local ERR="$(jq -r '.error | select( . != null )' <<<"$OUTPUT")"
   if [ -n "$ERR" ]; then die "Error: $ERR"; fi
@@ -206,7 +202,8 @@ send-api() {
 initialize() {
   local PAYLOAD="$(build-payload "$@")"
   PAYLOAD="$(finalize-payload <<<"$PAYLOAD")"
-  if is-dry-run; then dump-payload "$PAYLOAD"; echo "__DRY_RUN__"; return; fi
+  if is-dry-run || is-debug; then dump-payload "$PAYLOAD"; fi
+  if is-dry-run; then echo "__DRY_RUN__"; return; fi
   local OUTPUT="$(send-api chat.postMessage "$PAYLOAD")"
   get-thread "$OUTPUT"
 }
@@ -214,15 +211,16 @@ initialize() {
 update() {
   local PAYLOAD="$(build-payload "$@")"
   PAYLOAD="$(finalize-payload ts <<<"$PAYLOAD")"
-  if is-dry-run; then dump-payload "$PAYLOAD"; return; fi
+  if is-dry-run || is-debug; then dump-payload "$PAYLOAD"; fi
+  if is-dry-run; then return; fi
   send-api chat.update "$PAYLOAD"
 }
 
 attach() {
   local PAYLOAD="$(build-payload "$@")"
   PAYLOAD="$(finalize-payload thread_ts <<<"$PAYLOAD")"
+  if is-dry-run || is-debug; then dump-payload "$PAYLOAD"; fi
   if is-dry-run; then
-    dump-payload "$PAYLOAD"
     if [ -n "${INFORM_SLACK_MSG_ID:-}" ]; then echo "__DRY_RUN__"; fi
     return
   fi
