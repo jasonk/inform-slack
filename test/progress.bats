@@ -24,13 +24,13 @@ setup() { load "bats-setup.bash"; }
 @test "block-progress" {
   source inform-slack
 
-  run block-progress 50
+  run block-progress 50 100
   assert_json '{
     "type": "section",
     "text": { "type": "mrkdwn", "text": "`⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜` 50%" }
   }'
 
-  run block-progress 79
+  run block-progress 79 100
   assert_json '{
     "type": "section",
     "text": { "type": "mrkdwn", "text": "`⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜` 79%" }

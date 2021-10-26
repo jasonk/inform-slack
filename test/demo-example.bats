@@ -28,13 +28,6 @@ setup() {
        }
      },
      {
-       "text": {
-         "text": "`⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜` 0%",
-         "type": "mrkdwn"
-       },
-       "type": "section"
-     },
-     {
        "type": "section",
        "text": {
          "type": "mrkdwn",

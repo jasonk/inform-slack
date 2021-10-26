@@ -49,8 +49,8 @@ block-file() {
 
 block-progress() {
   local -i POS="${1:-${INFORM_SLACK_PROGRESS_POS:-0}}"
-  local -i MAX="${2:-${INFORM_SLACK_PROGRESS_MAX:-100}}"
-  if (( MAX == 0 )); then return; fi
+  local -i MAX="${2:-${INFORM_SLACK_PROGRESS_MAX:-0}}"
+  if (( POS <= 0 )) || (( MAX <= 0 )); then return; fi
   local -i PCT="$(compute-percentage-complete "$POS" "$MAX")"
   local BAR="$(draw-progress-bar "$PCT")"
   block-mrkdwn "$(printf '`%s` %i%%\n' "$BAR" "$PCT")"

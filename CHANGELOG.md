@@ -10,6 +10,11 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+## [v1.0.7] - 2021-10-26
+
+- Make progress max default to `0` and only render a progress bar if
+  `max` and `pos` are both over zero.
+
 ## [v1.0.6] - 2021-10-26
 
 - Allow message builder to take message from environment.
@@ -43,7 +48,8 @@ adheres to [Semantic Versioning][semver].
 
 - First actual release.
 
-[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.6...HEAD
+[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.7...HEAD
+[v1.0.7]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.7
 [v1.0.6]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.6
 [v1.0.5]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.5
 [v1.0.4]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.4
