@@ -12,6 +12,7 @@ adheres to [Semantic Versioning][semver].
 
 - Allow message builder to take message from environment.
 - Fix problem with setting MODE.
+- Document `$INFORM_SLACK_PROGRESS_CLOCK`.
 
 ## [v1.0.5] - 2021-10-22
 

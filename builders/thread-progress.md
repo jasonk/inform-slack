@@ -23,4 +23,10 @@ inform-slack --update
    done, for progress tracking purposes.
  * `INFORM_SLACK_PROGRESS_POS` - The number of things that have been
    done.
-
+ * `INFORM_SLACK_PROGRESS_CLOCK` - If you set this to a non-empty
+   value then instead of the progress being rendered as a traditional
+   progress bar, you'll get a more compact progress indicator,
+   consisting of a clock emoji prepended to the title text, where the
+   clock hands progress from `12:00` back to `12:00`.  note that the
+   default Slack emoji set only includes clock emoji for `*:00` and
+   `*:30`.
