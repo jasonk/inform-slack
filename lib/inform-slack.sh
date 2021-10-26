@@ -322,8 +322,8 @@ inform_slack() {
   export INFORM_SLACK_MSG_ID
   export INFORM_SLACK_THREAD
 
+  MODE=""
   while (( $# )); do
-    MODE=""
     case "$1" in
       # Option Flags
       -h|--help)              usage                         ; exit ;;
