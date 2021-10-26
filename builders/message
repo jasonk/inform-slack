@@ -3,4 +3,9 @@
 
 source inform-slack
 
-for I in "$@"; do block-mrkdwn "$I"; done
+if (( $# )); then
+  for I in "$@"; do block-mrkdwn "$I"; done
+fi
+if [ -n "${INFORM_SLACK_MESSAGE:-}" ]; then
+  block-mrkdwn "$INFORM_SLACK_MESSAGE";
+fi

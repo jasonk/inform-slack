@@ -10,7 +10,8 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
-- Fix problem with setting MODE
+- Allow message builder to take message from environment.
+- Fix problem with setting MODE.
 
 ## [v1.0.5] - 2021-10-22
 
