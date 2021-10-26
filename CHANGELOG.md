@@ -10,7 +10,10 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+## [v1.0.6] - 2021-10-26
+
 - Allow message builder to take message from environment.
+- Add a `command-output` builder.
 - Fix problem with setting MODE.
 - Document `$INFORM_SLACK_PROGRESS_CLOCK`.
 
@@ -40,7 +43,8 @@ adheres to [Semantic Versioning][semver].
 
 - First actual release.
 
-[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.5...HEAD
+[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.6...HEAD
+[v1.0.6]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.6
 [v1.0.5]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.5
 [v1.0.4]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.4
 [v1.0.3]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.3

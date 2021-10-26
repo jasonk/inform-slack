@@ -14,33 +14,7 @@ CD="$(awk '{print $3}' <<<"$CI")"
 # Today's Date
 TD="$(date +%F)"
 
-PROBLEMS=()
-if git rev-parse -q --verify "refs/tags/$EV" >/dev/null; then
-  PROBLEMS+=( "Version $EV already tagged, did you forget to increment it?" )
-fi
-
-if [ "$TD" != "$CD" ]; then
-  PROBLEMS+=( "Today is $TD, but latest Changelog entry is $CD" )
-fi
-if [ "$CV" != "$EV" ]; then
-  PROBLEMS+=( "Executable version is $EV, but Changelog version is $CV" )
-fi
-
-UR="$(grep -E '^\[Unreleased\]:' ../CHANGELOG.md)"
-if [ -z "$UR" ]; then
-  PROBLEMS+=( "No [Unreleased] URL in CHANGELOG" )
-fi
-if [ "$(basename "$UR")" != "${EV}...HEAD" ]; then
-  PROBLEMS+=( "Wrong [Unreleased] URL in CHANGELOG" )
-fi
-
-if ! grep -qE "^\[$EV\]: $REPO/releases/tag/$EV$" ../CHANGELOG.md; then
-  PROBLEMS+=( "No [$EV] tag in CHANGELOG" )
-fi
-
-if [ -n "$(git status --porcelain=v1 2>/dev/null)" ]; then
-  PROBLEMS+=( "The repo has uncommitted changes" )
-fi
+readarray -t PROBLEMS < <(./check-release.sh)
 
 if (( ${#PROBLEMS[@]} )); then
   echo "Problems detected, cannot release:" 1>&2
