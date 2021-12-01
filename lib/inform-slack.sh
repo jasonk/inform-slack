@@ -7,6 +7,8 @@
 : ${INFORM_SLACK_LINK_NAMES:=false}
 : ${INFORM_SLACK_REPLY_BROADCAST:=}
 
+INFORM_SLACK_LIB="$(realpath -P "${BASH_SOURCE[0]}")"
+
 if [ -n "${INFORM_SLACK_BUILDERS:-}" ]; then
   INFORM_SLACK_BUILDERS="$INFORM_SLACK_BUILDERS:$INFORM_SLACK_DIR/builders"
 else
@@ -131,17 +133,11 @@ build-payload() {
 }
 
 run-builder() {
-  if (( $# )); then
-    local BUILDER="$1" ; shift
-    local CMD="$(find-builder "$BUILDER")"
-    debug "Found Builder: $CMD (from '$BUILDER')"
-    if [ -z "$CMD" ]; then die "Unable to find builder '$BUILDER'"; fi
-    "$CMD" "$@"
-  elif [ -n "${INFORM_SLACK_BUILDER:-}" ]; then
-    run-builder $INFORM_SLACK_BUILDER
-  else
-    run-builder thread-progress
-  fi
+  local BUILDER="$1" ; shift
+  local CMD="$(find-builder "$BUILDER")"
+  debug "Found Builder: $CMD (from '$BUILDER')"
+  if [ -z "$CMD" ]; then die "Unable to find builder '$BUILDER'"; fi
+  "$CMD" "$@"
 }
 
 finalize-payload() {
@@ -219,8 +215,7 @@ send-api() {
 }
 
 initialize() {
-  local PAYLOAD="$(build-payload "$@")"
-  PAYLOAD="$(finalize-payload <<<"$PAYLOAD")"
+  local PAYLOAD="$(finalize-payload)"
   if is-dry-run || is-debug; then dump-payload "$PAYLOAD"; fi
   if is-dry-run; then echo "__DRY_RUN__"; return; fi
   local OUTPUT="$(send-api chat.postMessage "$PAYLOAD")"
@@ -228,16 +223,14 @@ initialize() {
 }
 
 update() {
-  local PAYLOAD="$(build-payload "$@")"
-  PAYLOAD="$(finalize-payload ts <<<"$PAYLOAD")"
+  local PAYLOAD="$(finalize-payload ts)"
   if is-dry-run || is-debug; then dump-payload "$PAYLOAD"; fi
   if is-dry-run; then return; fi
   send-api chat.update "$PAYLOAD"
 }
 
 attach() {
-  local PAYLOAD="$(build-payload "$@")"
-  PAYLOAD="$(finalize-payload thread_ts <<<"$PAYLOAD")"
+  local PAYLOAD="$(finalize-payload thread_ts)"
   if is-dry-run || is-debug; then dump-payload "$PAYLOAD"; fi
   if is-dry-run; then
     if [ -n "${INFORM_SLACK_MSG_ID:-}" ]; then echo "__DRY_RUN__"; fi
@@ -247,8 +240,16 @@ attach() {
   get-thread "$OUTPUT"
 }
 
+automatic() {
+  if [ -n "${INFORM_SLACK_THREAD:-}" ]; then
+    attach "$@"
+  else
+    initialize "$@"
+  fi
+}
+
 preview() {
-  local PAYLOAD="$(build-payload "$@")"
+  local PAYLOAD="$(finalize-payload)"
   local TEAM="${INFORM_SLACK_TEAM_ID:-TAEFCEDHS}"
   PAYLOAD="$(urlencode "$PAYLOAD")"
   open-url "https://app.slack.com/block-kit-builder/$TEAM#$PAYLOAD"
@@ -270,9 +271,31 @@ list-builders() {
   for DIR in "${DIRS[@]}"; do ls -1 "$DIR"; done \
     | sort | uniq | grep -v -E '\.md$'
 }
+list-functions() {
+# while IFS='' read -r FUNC; do
+#   FUNC="${FUNC#declare -f }"
+#   echo "FUNC: $FUNC"
+#   declare -f "$FUNC"
+# done < <(declare -F)
+  grep -h -B1 '### TYPE' "$(dirname "$INFORM_SLACK_LIB")"/*.sh |
+    sed -n 's/() {.*//p'
+# INFORM_SLACK_LIB="$(realpath -P "${BASH_SOURCE[0]}")"
+}
 
 show-help-file() {
-  local FILE="$(realpath -P "$1").md"
+  local FILE="${1:-}"
+  echo "FILE=$FILE"
+  set -x
+  if [ -z "$FILE" ]; then
+    if [ -n "${INFORM_SLACK_BUILDER:-}" ]; then
+      FILE="$(find-builder "$INFORM_SLACK_BUILDER")"
+    else
+      FILE="${INFORM_SLACK_LIB%.sh}"
+    fi
+  fi
+  FILE="$(realpath -P "$FILE").md"
+  echo "FILE=$FILE"
+  set +x
   if [ -f "$FILE" ]; then
     if command -v bat &>/dev/null; then
       bat -p "$FILE"
@@ -284,20 +307,12 @@ show-help-file() {
   fi
 }
 
-help-builder() {
-  local BUILDER="$(find-builder "$1")"
-  show-help-file "$BUILDER"
-}
-
 usage() {
   local ERROR="${1:-}"
-  if [ -n "$ERROR" ]; then warn "ERROR: $ERROR"; fi
-  show-help-file "$0"
+  warn "Usage: inform-slack [options] [message]"
+  warn ""
+  warn "Try 'inform-slack --help' for more details."
   if [ -n "$ERROR" ]; then exit 1; else exit 0; fi
-}
-
-message() {
-  attach message "$@";
 }
 
 urlencode() {
@@ -318,46 +333,64 @@ urlencode() {
 }
 
 inform_slack() {
-  export INFORM_SLACK_DRY_RUN
-  export INFORM_SLACK_MSG_ID
-  export INFORM_SLACK_THREAD
-
-  MODE=""
+  local BUILDER=""
+  local MODE="automatic"
+  local HELP=false
   while (( $# )); do
     case "$1" in
       # Option Flags
-      -h|--help)              usage                         ; exit ;;
-      -V|--version)           echo "$INFORM_SLACK_VERSION"  ; exit ;;
-      -l|--list-builders)     list-builders                 ; exit ;;
-      -H|--help-builder)      shift 1 ; help-builder "$1"   ; exit ;;
-      -n|--dry-run)
-        INFORM_SLACK_DRY_RUN="true"
-        shift 1 ;;
-      -I|--msg-id|--msgid)
-        INFORM_SLACK_MSG_ID="true"
-        shift 1 ;;
-      -t|--thread)
-        INFORM_SLACK_THREAD="$2"
-        shift 2 ;;
-      --thread=*)
-        INFORM_SLACK_THREAD="${1#*=}"
-        shift 1 ;;
+      -V|--version)           echo "$INFORM_SLACK_VERSION"    ; exit ;;
+      --list-builders)        list-builders                   ; exit ;;
+      --list-functions)       list-functions                  ; exit ;;
+
+      -n|--dry-run|--dryrun)  INFORM_SLACK_DRY_RUN="true"     ; shift 1 ;;
+      -I|--msg-id|--msgid)    INFORM_SLACK_MSG_ID="true"      ; shift 1 ;;
+
+      -h|--help)              HELP=true                       ; shift 1 ;;
+
+      -t|--thread)            INFORM_SLACK_THREAD="$2"        ; shift 2 ;;
+      --thread=*)             INFORM_SLACK_THREAD="${1#*=}"   ; shift 1 ;;
+
+      -b|--builder)           BUILDER="$2"                    ; shift 2 ;;
+      --builder=*)            BUILDER="${1#*=}"               ; shift 1 ;;
+
+      -S|--stdin)             BUILDER="from-stdin"            ; shift 1 ;;
+
       # Mode Flags
-      -i|--initialize|--init) MODE="initialize" ; shift 1 ; break ;;
-      -a|--attach)            MODE="attach"     ; shift 1 ; break ;;
-      -b|--build|--builder)   MODE="attach"     ; shift 1 ; break ;;
-      -u|--update)            MODE="update"     ; shift 1 ; break ;;
-      -m|--message|--msg)     MODE="message"    ; shift 1 ; break ;;
-      -P|--preview)           MODE="preview"    ; shift 1 ; break ;;
-      # Default to message mode
-      *)                      MODE="message"    ;           break ;;
+      -P|--preview)           MODE="preview"                  ; shift 1 ;;
+      -i|--initialize|--init) MODE="initialize"               ; shift 1 ;;
+      -a|--attach)            MODE="attach"                   ; shift 1 ;;
+      -u|--update)            MODE="update"                   ; shift 1 ;;
+      -A|--auto|--automatic)  MODE="automatic"                ; shift 1 ;;
+
+      --say|--message)        MODE="auto" ; BUILDER="message" ; shift 1 ;;
+
+      --)   shift 1 ; break ;;
+      -*)   die "Unknown option '$1'" ;;
+      *)    break ;;
     esac
   done
 
-  if [ -z "$MODE" ]; then usage "Must specify mode"; exit 1; fi
+  if [ -n "$BUILDER" ]; then
+    INFORM_SLACK_BUILDER="$BUILDER"
+  fi
+
+  if $HELP; then show-help-file; exit 0; fi
+
+  # If no builder was specified...
+  if [ -z "$BUILDER" ]; then
+    if [ -n "${INFORM_SLACK_BUILDER:-}" ]; then
+      # ...we either use whatever the environment says to use...
+      BUILDER="$INFORM_SLACK_BUILDER"
+    else
+      # Or the hard-coded default...
+      BUILDER="thread-progress"
+    fi
+    INFORM_SLACK_BUILDER="$BUILDER"
+  fi
 
   debug "MODE=$MODE"
-  "$MODE" "$@"
+  "$MODE" "$@" <<<"$(build-payload "$BUILDER" "$@")"
 }
 
 source "$INFORM_SLACK_DIR/lib/utils.sh"

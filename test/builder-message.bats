@@ -5,7 +5,9 @@ setup() { load "bats-setup.bash"; }
 @test "message" {
   run-builder message 'Ahoy There!'
   assert_success
-  assert_json '{
+  assert_json '
+  "Ahoy There!"
+  {
     "type": "section",
     "text": {
       "type": "mrkdwn",

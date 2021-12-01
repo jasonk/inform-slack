@@ -3,9 +3,22 @@
 
 source inform-slack
 
+did_text=false
+do-text() {
+  if $did_text; then return; fi
+  if [ -n "${1:-}" ]; then
+    text "$1"
+    did_text=true
+  fi
+}
+
 if (( $# )); then
-  for I in "$@"; do block-mrkdwn "$I"; done
+  for I in "$@"; do
+    do-text "$I"
+    block-mrkdwn "$I"
+  done
 fi
 if [ -n "${INFORM_SLACK_MESSAGE:-}" ]; then
+  do-text "$INFORM_SLACK_MESSAGE";
   block-mrkdwn "$INFORM_SLACK_MESSAGE";
 fi

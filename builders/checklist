@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# https://github.com/jasonk/inform-slack
+
+source inform-slack
+
+txt="${INFORM_SLACK_CHECKLIST_TEXT:-}"
+dir="$INFORM_SLACK_CHECKLIST_DIR"
+title="${INFORM_SLACK_CHECKLIST_TITLE:-}"
+todo_icon=":white_medium_square:"
+done_icon=":heavy_check_mark:"
+fail_icon=":no_entry_sign:"
+
+while (( $# )); do
+  case "$1" in
+    --text)                 txt="$2"            ; shift 2 ;;
+    --text=*)               txt="${1#*=}"       ; shift 1 ;;
+    -T|--title)             title="$2"          ; shift 2 ;;
+    --title=*)              title="${1#*=}"     ; shift 1 ;;
+    -d|--directory|--dir)   dir="$2"            ; shift 2 ;;
+    --directory=*|--dir=*)  dir="${1#*=}"       ; shift 1 ;;
+    --todo-icon)            todo_icon="$2"      ; shift 2 ;;
+    --todo-icon=*)          todo_icon="${1#*=}" ; shift 1 ;;
+    --done-icon)            done_icon="$2"      ; shift 2 ;;
+    --done-icon=*)          done_icon="${1#*=}" ; shift 1 ;;
+    --fail-icon)            fail_icon="$2"      ; shift 2 ;;
+    --fail-icon=*)          fail_icon="${1#*=}" ; shift 1 ;;
+    *) usage "Unknown option '$1'" ;;
+  esac
+done
+
+cd "$dir"
+
+if [ -n "$txt" ]; then
+  text "$txt"
+elif [ -n "$title" ]; then
+  text "$title"
+fi
+
+if [ -n "$title" ]; then block-header "$title"; fi
+
+tasks=()
+
+for I in *.task; do
+  name="${I%.task}"
+  task="$(<"$I")"
+  if [ -f "${name}.done" ]; then
+    task="$done_icon $task"
+  elif [ -f "${name}.fail" ]; then
+    task="$fail_icon $task"
+  else
+    task="$todo_icon $task"
+  fi
+  tasks+=( "$task" )
+done
+
+block-mrkdwn "$(printf '%s\n' "${tasks[@]}")"

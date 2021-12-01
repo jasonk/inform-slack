@@ -8,16 +8,16 @@ setup() { load "bats-setup.bash"; }
   export INFORM_SLACK_PROGRESS_0_CHAR="Y"
   source inform-slack
 
-  run draw-progress-bar 50
+  run progress-bar 50
   assert_output "XXXXXYYYYY"
 
-  run draw-progress-bar 10
+  run progress-bar 10
   assert_output "XYYYYYYYYY"
 
-  run draw-progress-bar 25
+  run progress-bar 25
   assert_output "XXYYYYYYYY"
 
-  run draw-progress-bar 79
+  run progress-bar 79
   assert_output "XXXXXXXYYY"
 }
 
@@ -40,22 +40,22 @@ setup() { load "bats-setup.bash"; }
 @test "progress-clock" {
   source inform-slack
 
-  run draw-progress-clock 0
+  run progress-clock 0
   assert_output ":clock1200:"
 
-  run draw-progress-clock 100
+  run progress-clock 100
   assert_output ":clock1200:"
 
-  run draw-progress-clock 99
+  run progress-clock 99
   assert_output ":clock1130:"
 
-  run draw-progress-clock 50
+  run progress-clock 50
   assert_output ":clock600:"
 
-  run draw-progress-clock 75
+  run progress-clock 75
   assert_output ":clock900:"
 
-  run draw-progress-clock 25
+  run progress-clock 25
   assert_output ":clock300:"
 }
 

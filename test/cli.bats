@@ -9,6 +9,8 @@ setup() { load "bats-setup.bash"; }
   assert_line 'tap-summary'
   assert_line 'tests-summary'
   assert_line 'thread-progress'
+  assert_line 'message'
+  assert_line 'from-stdin'
 }
 
 @test "cli options --help" {

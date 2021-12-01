@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# https://github.com/jasonk/inform-slack
+
+source inform-slack
+
+eval "$(
+  for BUILDER in $(list-builders); do
+    echo "${BUILDER}() { run-builder $BUILDER \"\$@\"; }"
+  done
+)"
+eval "$(cat)"

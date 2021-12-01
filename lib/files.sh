@@ -13,13 +13,15 @@ upload-file() {
   local ARG
   local ARGS=(
     -F "channels=${INFORM_SLACK_CHANNEL:-${SLACK_CHANNEL:-}}"
-    -F "thread_ts=$INFORM_SLACK_THREAD"
     -F "file=@$FILE"
   )
+  if [ -n "${INFORM_SLACK_THREAD:-}" ]; then
+    ARGS+=( -F "thread_ts=$INFORM_SLACK_THREAD" );
+  fi
   for ARG; do ARGS+=( -F "$ARG" ); done
 
   ARGS+=( "https://slack.com/api/files.upload" )
-  local OUTPUT="$(curl -fsSL -H <(curl-headers) "${ARGS[@]}")"
+  local OUTPUT="$(run-curl -XPOST "${ARGS[@]}" "$URL")"
   local ERR="$(jq -r '.error | select( . != null )' <<<"$OUTPUT")"
   if [ -n "$ERR" ]; then die "Error: $ERR"; fi
   echo "$OUTPUT"

@@ -30,7 +30,7 @@ done
 text "${txt:-$title${status:+ - $status}}"
 
 if [ -n "$clock" ]; then
-  block-header "$(draw-progress-clock) $title"
+  block-header "$(progress-clock) $title"
 else
   block-header "$title"
   block-progress "$pos" "$max"

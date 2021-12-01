@@ -2,10 +2,13 @@
 # https://github.com/jasonk/inform-slack
 
 block-context() {
-  jq -cs '{ type: "context", elements: ([.]|flatten) }' <<<"$@";
+  ### TYPE: block
+  wrap-mrkdwn "$@" |
+    jq -cs '{ type: "context", elements: ([.]|flatten) }'
 }
 
 block-header() {
+  ### TYPE: block
   local MSG="${1:-}"
   local ICON="${2:-}"
   if [ -n "$ICON" ]; then MSG="$ICON $MSG"; fi
@@ -15,6 +18,7 @@ block-header() {
 }
 
 block-image() {
+  ### TYPE: block
   local URL="${1:-}"
   local ALT="${2:-}"
   local TITLE="${3:-}"
@@ -31,16 +35,19 @@ block-image() {
 }
 
 block-list() {
+  ### TYPE: block
   local HEAD="$(printf '%s\n' "$1")"
   local BODY="$(printf ' • %s\n' "${@:2}")"
   block-mrkdwn "$(printf '%s\n%s\n' "$HEAD" "$BODY")"
 }
 
 block-divider() {
+  ### TYPE: block
   echo '{ "type": "divider" }';
 }
 
 block-file() {
+  ### TYPE: block
   local ID="${1:-}"
   if [ -z "$ID" ]; then return; fi
   jq -cn --arg ID "$ID" \
@@ -48,15 +55,17 @@ block-file() {
 }
 
 block-progress() {
+  ### TYPE: block
   local -i POS="${1:-${INFORM_SLACK_PROGRESS_POS:-0}}"
   local -i MAX="${2:-${INFORM_SLACK_PROGRESS_MAX:-0}}"
   if (( POS <= 0 )) || (( MAX <= 0 )); then return; fi
   local -i PCT="$(compute-percentage-complete "$POS" "$MAX")"
-  local BAR="$(draw-progress-bar "$PCT")"
+  local BAR="$(progress-bar "$PCT")"
   block-mrkdwn "$(printf '`%s` %i%%\n' "$BAR" "$PCT")"
 }
 
 block-section() {
+  ### TYPE: block
   local DATA='{ "type": "section" }'
   local JSON=0
   while (( $# )); do
@@ -84,10 +93,12 @@ block-section() {
 }
 
 block-fields() {
+  ### TYPE: block
   block-section "" "$(section-fields "$@")" "";
 }
 
 block-mrkdwn() {
+  ### TYPE: block
   if [ -z "${1:-}" ]; then return; fi;
   block-section --json "$(text-mrkdwn "$@")"
 }

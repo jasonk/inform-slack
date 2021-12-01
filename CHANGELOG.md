@@ -10,6 +10,18 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+## [v1.0.8] - 2021-12-01
+
+- Add a `checklist` builder.
+- Add the `from-stdin` builder (and a `--stdin` CLI option).
+- Refactor some argument parsing.
+- Fix issues with some builders not supplying alertnate text content.
+- Rename the `draw-progress-bar` and `draw-progress-clock` methods to
+  just `progress-bar` and `progress-clock`.
+- Add a tagging system to make it easier to find useful commands for
+  things like `--stdin` by running `inform-slack --list-functions`.
+- Add a `--version` option.
+
 ## [v1.0.7] - 2021-10-26
 
 - Make progress max default to `0` and only render a progress bar if
@@ -48,7 +60,8 @@ adheres to [Semantic Versioning][semver].
 
 - First actual release.
 
-[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.7...HEAD
+[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.8...HEAD
+[v1.0.8]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.8
 [v1.0.7]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.7
 [v1.0.6]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.6
 [v1.0.5]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.5

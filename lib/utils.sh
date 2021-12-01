@@ -15,7 +15,8 @@ compute-percentage-complete() {
 # percentage.  You can use this if you want to render your own
 # progress bar, but normally you would want to just do it the easy way
 # with `block-progress`.
-draw-progress-bar() {
+progress-bar() {
+  ### TYPE: misc
   local -i PCT="$1"
 
   local BAR_0="${INFORM_SLACK_PROGRESS_0_CHAR:-⬜}"
@@ -37,7 +38,8 @@ draw-progress-bar() {
 
 # Given a percentage complete, this picks the clock emoji that is
 # closest to that percentage through a 12-hour cycle.
-draw-progress-clock() {
+progress-clock() {
+  ### TYPE: misc
   local -i PCT="$1"
 
   local CLOCKS=(
@@ -75,4 +77,41 @@ draw-progress-clock() {
 
 # Emit a plain string message, properly quoted and escaped.  This will
 # be used as the 'text' value in a message
-text() { jq -csR '.|gsub("^\\s+|\\s+$";"")' <<<"$1"; }
+text() {
+  ### TYPE: misc
+  jq -csR '.|gsub("^\\s+|\\s+$";"")' <<<"$1"
+}
+
+# Return true if the input appears to be a JSON object (meaning it's
+# wrapped in {})
+is-json-object() { [[ $1 == \{*\} ]]; }
+is-json-array() { [[ $1 == \[*\] ]]; }
+is-json() { is-json-object "$1" || is-json-array "$1"; }
+
+# Given an array of arguments, check each one to see whether or not it
+# is already a json object.  If it isn't then wrap it into
+# a `text-mrkdwn` element.
+wrap-mrkdwn() {
+  local I
+  for I; do
+    if is-json-object "$I"; then
+      echo "$I"
+    else
+      text-mrkdwn "$I"
+    fi
+  done
+}
+
+# Given an array of arguments, check each one to see whether or not it
+# is already a json object.  If it isn't then wrap it into
+# a `text-plain` element.
+wrap-text() {
+  local I
+  for I; do
+    if is-json "$I"; then
+      echo "$I"
+    else
+      text-plain "$I"
+    fi
+  done
+}
