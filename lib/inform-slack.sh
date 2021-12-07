@@ -363,7 +363,7 @@ inform_slack() {
       -u|--update)            MODE="update"                   ; shift 1 ;;
       -A|--auto|--automatic)  MODE="automatic"                ; shift 1 ;;
 
-      --say|--message)        MODE="auto" ; BUILDER="message" ; shift 1 ;;
+      --say|--message)        MODE="automatic" ; BUILDER="message" ; shift 1 ;;
 
       --)   shift 1 ; break ;;
       -*)   die "Unknown option '$1'" ;;

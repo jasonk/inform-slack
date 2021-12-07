@@ -10,6 +10,10 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+## [v1.0.9] - 2021-12-06
+
+- Fix issue with automatic mode not working with `--say`/`--message`.
+
 ## [v1.0.8] - 2021-12-01
 
 - Add a `checklist` builder.
@@ -60,8 +64,8 @@ adheres to [Semantic Versioning][semver].
 
 - First actual release.
 
-[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.8...HEAD
-[v1.0.8]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.8
+[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.9...HEAD
+[v1.0.9]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.9
 [v1.0.7]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.7
 [v1.0.6]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.6
 [v1.0.5]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.5
