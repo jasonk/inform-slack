@@ -202,16 +202,27 @@ run-curl() {
 }
 
 send-api() {
-  local API="$1"
-  local PAYLOAD="${2:-$(cat -)}"
+  local API="$1" PAYLOAD="${2:-$(cat -)}" ; shift 2
   local TOKEN="${INFORM_SLACK_TOKEN:-${SLACK_TOKEN:-}}"
   if [ -z "$TOKEN" ]; then die "No token found"; fi
-  shift 2
   local URL="https://slack.com/api/$API"
-  local OUTPUT="$(run-curl -XPOST -d@- "$URL" <<<"$PAYLOAD")"
+  local OUTPUT="$(run-curl -XPOST -d@- "$URL" "$@" <<<"$PAYLOAD")"
+  check-api-response "$OUTPUT"
+  echo "$OUTPUT"
+}
+get-api() {
+  local API="$1" ; shift 1
+  local TOKEN="${INFORM_SLACK_TOKEN:-${SLACK_TOKEN:-}}"
+  if [ -z "$TOKEN" ]; then die "No token found"; fi
+  local URL="https://slack.com/api/$API"
+  local OUTPUT="$(run-curl -XGET "$URL" "$@")"
+  check-api-response "$OUTPUT"
+  echo "$OUTPUT"
+}
+check-api-response() {
+  local OUTPUT="$(jq . <<<"$1")"
   local ERR="$(jq -r '.error | select( . != null )' <<<"$OUTPUT")"
   if [ -n "$ERR" ]; then die "Error: $ERR"; fi
-  echo "$OUTPUT"
 }
 
 initialize() {
@@ -272,14 +283,20 @@ list-builders() {
     | sort | uniq | grep -v -E '\.md$'
 }
 list-functions() {
-# while IFS='' read -r FUNC; do
-#   FUNC="${FUNC#declare -f }"
-#   echo "FUNC: $FUNC"
-#   declare -f "$FUNC"
-# done < <(declare -F)
   grep -h -B1 '### TYPE' "$(dirname "$INFORM_SLACK_LIB")"/*.sh |
     sed -n 's/() {.*//p'
-# INFORM_SLACK_LIB="$(realpath -P "${BASH_SOURCE[0]}")"
+}
+get-team-id() { get-api auth.test | jq -r .team_id; }
+get-team-url() { get-api auth.test | jq -r .url; }
+get-team-name() { get-api auth.test | jq -r .team; }
+get-thread-url() {
+  local THREAD="${INFORM_SLACK_THREAD:-}"
+  local CHANNEL="${INFORM_SLACK_CHANNEL:-${SLACK_CHANNEL:-}}"
+  local TEAM="$(get-team-id)"
+  if [ -z "$THREAD" ]; then die "No thread id provided"; fi
+  if [ -z "$CHANNEL" ]; then die "No channel id provided"; fi
+  if [ -z "$TEAM" ]; then die "Could not determine team id"; fi
+  echo "https://app.slack.com/client/$TEAM/$CHANNEL/thread/$CHANNEL-$THREAD"
 }
 
 show-help-file() {
@@ -342,6 +359,10 @@ inform_slack() {
       -V|--version)           echo "$INFORM_SLACK_VERSION"    ; exit ;;
       --list-builders)        list-builders                   ; exit ;;
       --list-functions)       list-functions                  ; exit ;;
+      --get-thread-url)       get-thread-url                  ; exit ;;
+      --get-team-id)          get-team-id                     ; exit ;;
+      --get-team-url)         get-team-url                    ; exit ;;
+      --get-team-name)        get-team-name                   ; exit ;;
 
       -n|--dry-run|--dryrun)  INFORM_SLACK_DRY_RUN="true"     ; shift 1 ;;
       -I|--msg-id|--msgid)    INFORM_SLACK_MSG_ID="true"      ; shift 1 ;;

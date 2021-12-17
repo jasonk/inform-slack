@@ -10,6 +10,12 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+## [v1.1.0] - 2021-12-17
+
+- Added options for getting some useful information about Slack. In
+  particular the `--get-thread-url` option that will return the URL
+  you can click on to go directly to the thread being produced.
+
 ## [v1.0.9] - 2021-12-06
 
 - Fix issue with automatic mode not working with `--say`/`--message`.
@@ -64,7 +70,8 @@ adheres to [Semantic Versioning][semver].
 
 - First actual release.
 
-[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.0.9...HEAD
+[Unreleased]: https://github.com/jasonk/inform-slack/compare/v1.1.0...HEAD
+[v1.1.0]: https://github.com/jasonk/inform-slack/releases/tag/v1.1.0
 [v1.0.9]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.9
 [v1.0.7]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.7
 [v1.0.6]: https://github.com/jasonk/inform-slack/releases/tag/v1.0.6

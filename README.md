@@ -205,7 +205,7 @@ written to the disk).
 However, this curl feature was added in version 7.55, so if you have
 a version of curl older than that, we fall back to including the
 `Authorization` header as a command-line argument.  If you are using
-this on a multi-user machine you want to ensure that this doesn't
+this on a multi-user machine and you want to ensure that this doesn't
 happen, you can set `$INFORM_SLACK_REQUIRE_HEADER_SAFETY` to any
 non-empty value, and if we detect that your curl version is too old
 we'll just die instead of falling back.

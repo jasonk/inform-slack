@@ -18,6 +18,12 @@ export INFORM_SLACK_THREAD="$(inform-slack --initialize)"
   exit.
 * `--list-builders` - List the available builders and exit.
 * `--list-functions` - List the available functions and exit.
+* `--get-team-id` - Get the Slack Team ID associated with your token.
+* `--get-team-url` - Get the Slack Team URL for your token.
+* `--get-team-name` - Get the Slack Team name for your token.
+* `--get-thread-url` - Get the URL to the thread being produced.  This
+  can be useful if you want to include links to the thread from other
+  tools (such as CI or deployment tools).
 * `--dry-run` or `-n` - Don't actually send to Slack, just show the
   JSON that would have been sent.
 * `--thread <id>` or `-t <id>` - Specify the ID of the main thread as
